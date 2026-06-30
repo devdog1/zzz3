@@ -12,6 +12,23 @@ A PHP/Apache2/BIRD-based system for managing BGP blackholes with automated expir
 - **Action Logging**: All user actions and automated events are logged to an SQLite database.
 - **Safety**: BIRD is configured to import nothing from the kernel and only export specific blackhole prefixes.
 
+## Screenshots
+
+### Blackhole Management
+![Active Blackholes](screenshots/blackholes.png)
+
+### BGP Peer Management
+![BGP Peers](screenshots/peers.png)
+
+### Whitelist Management
+![Whitelist](screenshots/whitelist.png)
+
+### Global Settings
+![Global Settings](screenshots/settings.png)
+
+### Action Logs
+![Action Logs](screenshots/logs.png)
+
 ## Prerequisites
 
 - Ubuntu 22.04+ (or compatible Linux distribution)
