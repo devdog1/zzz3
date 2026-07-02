@@ -2,11 +2,16 @@
 # Set up directories and permissions
 mkdir -p /etc/bird/dynamic
 chown www-data:www-data /etc/bird/dynamic
-chmod 755 /etc/bird/dynamic
-touch /etc/bird/dynamic/blackholes_v4.conf
-touch /etc/bird/dynamic/blackholes_v6.conf
-chown www-data:www-data /etc/bird/dynamic/blackholes_v4.conf /etc/bird/dynamic/blackholes_v6.conf
-chmod 644 /etc/bird/dynamic/blackholes_v4.conf /etc/bird/dynamic/blackholes_v6.conf
+chmod 775 /etc/bird/dynamic
+
+# Shared config files
+touch /etc/bird/dynamic/peers.conf
+touch /etc/bird/dynamic/global.conf
+touch /etc/bird_static.conf
+touch /etc/bird_static_v6.conf
+
+chown www-data:www-data /etc/bird/dynamic/peers.conf /etc/bird/dynamic/global.conf /etc/bird_static.conf /etc/bird_static_v6.conf
+chmod 664 /etc/bird/dynamic/peers.conf /etc/bird/dynamic/global.conf /etc/bird_static.conf /etc/bird_static_v6.conf
 
 mkdir -p /var/www/db
 chown www-data:www-data /var/www/db
