@@ -1,10 +1,12 @@
 <?php
 class BirdManager {
     private $db;
-    private $static_file = '/etc/bird_static.conf';
-    private $static_file_v6 = '/etc/bird_static_v6.conf';
-    private $peers_file = '/etc/bird/dynamic/peers.conf';
-    private $global_file = '/etc/bird/dynamic/global.conf';
+
+    // Use paths that will work with symbolic links or absolute paths in /opt/blackhole
+    private $static_file    = '/opt/blackhole/etc/bird/bird_static.conf';
+    private $static_file_v6 = '/opt/blackhole/etc/bird/bird_static_v6.conf';
+    private $peers_file     = '/opt/blackhole/etc/bird/dynamic/peers.conf';
+    private $global_file    = '/opt/blackhole/etc/bird/dynamic/global.conf';
 
     public function __construct(Database $db) {
         $this->db = $db;

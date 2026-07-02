@@ -3,10 +3,10 @@
  * Background cleanup script to expire blackholes
  */
 
-require_once '/var/www/html/includes/Database.php';
-require_once '/var/www/html/includes/BirdManager.php';
+require_once '/opt/blackhole/var/www/html/includes/Database.php';
+require_once '/opt/blackhole/var/www/html/includes/BirdManager.php';
 
-$db = new Database();
+$db = new Database('/opt/blackhole/var/www/db/blackhole.sq3');
 $bird = new BirdManager($db);
 
 echo "Starting cleanup at " . date('Y-m-d H:i:s') . " UTC\n";

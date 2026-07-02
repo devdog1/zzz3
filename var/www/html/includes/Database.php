@@ -2,13 +2,15 @@
 class Database {
     private $db;
 
-    public function __construct($db_path = '/var/www/db/blackhole.sq3') {
+    public function __construct($db_path = '/opt/blackhole/var/www/db/blackhole.sq3') {
         $this->db = new SQLite3($db_path);
-        date_default_timezone_set('UTC');
+        // Use system timezone for "local time"
+        // date_default_timezone_set('UTC'); // Removed UTC override
     }
 
     public function query($sql, $params = []) {
         $stmt = $this->db->prepare($sql);
+        if (!$stmt) return false;
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
@@ -18,19 +20,22 @@ class Database {
     public function fetchAll($sql, $params = []) {
         $result = $this->query($sql, $params);
         $rows = [];
-        while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
-            $rows[] = $row;
+        if ($result) {
+            while ($row = $result->fetchArray(SQLITE3_ASSOC)) {
+                $rows[] = $row;
+            }
         }
         return $rows;
     }
 
     public function fetchOne($sql, $params = []) {
         $result = $this->query($sql, $params);
-        return $result->fetchArray(SQLITE3_ASSOC);
+        return $result ? $result->fetchArray(SQLITE3_ASSOC) : null;
     }
 
     public function execute($sql, $params = []) {
         $stmt = $this->db->prepare($sql);
+        if (!$stmt) return false;
         foreach ($params as $key => $value) {
             $stmt->bindValue($key, $value);
         }
