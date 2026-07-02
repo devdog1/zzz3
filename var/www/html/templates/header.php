@@ -22,6 +22,7 @@
                     <li class="nav-item"><a class="nav-link" href="index.php">Blackholes</a></li>
                     <li class="nav-item"><a class="nav-link" href="peers.php">Peers</a></li>
                     <li class="nav-item"><a class="nav-link" href="whitelist.php">Whitelist</a></li>
+                    <li class="nav-item"><a class="nav-link" href="allowable.php">Allowable</a></li>
                     <li class="nav-item"><a class="nav-link" href="settings.php">Settings</a></li>
                     <li class="nav-item"><a class="nav-link" href="logs.php">Logs</a></li>
                 </ul>

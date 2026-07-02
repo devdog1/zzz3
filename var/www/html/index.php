@@ -16,33 +16,48 @@ if ($_SERVER['REQUEST_METHOD'] === 'POST') {
         $type = filter_var($ip, FILTER_VALIDATE_IP, FILTER_FLAG_IPV6) ? 'IPv6' : 'IPv4';
 
         if (filter_var($ip, FILTER_VALIDATE_IP)) {
-            // Check whitelist with CIDR support
-            $whitelist = $db->fetchAll("SELECT ip_address FROM whitelist");
-            $is_whitelisted = false;
-            foreach ($whitelist as $item) {
-                if (Utils::ipInRange($ip, $item['ip_address'])) {
-                    $is_whitelisted = true;
+            // Check allowable ranges
+            $allowable = $db->fetchAll("SELECT ip_address FROM allowable_ranges");
+            $is_allowed = empty($allowable); // If list is empty, all are allowed
+            foreach ($allowable as $range) {
+                if (Utils::ipInRange($ip, $range['ip_address'])) {
+                    $is_allowed = true;
                     break;
                 }
             }
 
-            if ($is_whitelisted) {
-                $message = "IP address is whitelisted and cannot be blocked.";
+            if (!$is_allowed) {
+                $message = "IP address is not within any allowable ranges.";
                 $message_type = "danger";
             } else {
-                $db->execute("INSERT INTO blocks (ip_address, type, reason, expires_at) VALUES (:ip, :type, :reason, DATETIME('now', :duration))", [
-                    ':ip' => $ip,
-                    ':type' => $type,
-                    ':reason' => $reason,
-                    ':duration' => $duration
-                ]);
-                $db->logAction("Add Block", $ip, "Reason: $reason. Duration: $duration.");
-                if ($bird->updateConfig()) {
-                    $message = "IP address blackholed successfully.";
-                    $message_type = "success";
+                // Check whitelist with CIDR support
+                $whitelist = $db->fetchAll("SELECT ip_address FROM whitelist");
+                $is_whitelisted = false;
+                foreach ($whitelist as $item) {
+                    if (Utils::ipInRange($ip, $item['ip_address'])) {
+                        $is_whitelisted = true;
+                        break;
+                    }
+                }
+
+                if ($is_whitelisted) {
+                    $message = "IP address is whitelisted and cannot be blocked.";
+                    $message_type = "danger";
                 } else {
-                    $message = "IP added to DB, but BIRD configuration failed.";
-                    $message_type = "warning";
+                    $db->execute("INSERT INTO blocks (ip_address, type, reason, expires_at) VALUES (:ip, :type, :reason, DATETIME('now', :duration))", [
+                        ':ip' => $ip,
+                        ':type' => $type,
+                        ':reason' => $reason,
+                        ':duration' => $duration
+                    ]);
+                    $db->logAction("Add Block", $ip, "Reason: $reason. Duration: $duration.");
+                    if ($bird->updateConfig()) {
+                        $message = "IP address blackholed successfully.";
+                        $message_type = "success";
+                    } else {
+                        $message = "IP added to DB, but BIRD configuration failed.";
+                        $message_type = "warning";
+                    }
                 }
             }
         } else {
